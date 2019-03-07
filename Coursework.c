@@ -42,9 +42,25 @@ void print_board(struct Board b){
 	
 }
 
-bool check_victory(struct Board b){
+bool check_victory(struct Board b, char *winner){
 	bool won = false;
-	
+	for(int i = 0; i<3; i++){
+		if (b.Positions[i].row[0] != ' ' && b.Positions[i].row[0] == b.Positions[i].row[1] && b.Positions[i].row[0] == b.Positions[i].row[2]){
+			*winner = b.Positions[i].row[0];
+			won = true;
+		}
+		else if(b.Positions[0].row[i] != ' ' && b.Positions[0].row[i] == b.Positions[1].row[i] && b.Positions[0].row[i] == b.Positions[2].row[i]){
+			*winner = b.Positions[0].row[i];
+			won = true;
+		}
+	}
+	if(b.Positions[0].row[0] != ' ' && b.Positions[0].row[0] == b.Positions[1].row[1] && b.Positions[0].row[0] == b.Positions[2].row[2]){
+		*winner = b.Positions[1].row[1];
+		won = true;
+	}else if(b.Positions[0].row[2] != ' ' && b.Positions[0].row[2] == b.Positions[1].row[1] && b.Positions[0].row[2] == b.Positions[2].row[0]){
+		*winner = b.Positions[1].row[1];
+		won = true;
+	}
 	
 	return won;
 }
@@ -62,6 +78,8 @@ int main(int argc, char **argv)
 	int col;
 	int turncount = 0;
 	char turn = 'X';
+	char decicion;
+	char winner;
 	bool valid = false;
 	bool won = false;
 	printf("Welcome to Tic tac toe!\n");
@@ -69,33 +87,45 @@ int main(int argc, char **argv)
 	print_board(b);
 	while(!won){
 		while(!valid){
+			print_board(b);
+			row = 0;
+			col = 0;
 			printf("%c, your turn!\nrow:", turn);
-			scanf("%d", &row);
+			while(scanf("%d", &row)!= 1 ){
+				printf("Invalid data\nrow:");
+				getchar();
+			}
+			
+			if (row > 3){valid = false;}
 			printf("column:");
-			scanf("%d", &col);
+			while(scanf("%d", &col) !=1){
+				printf("Invalid data\nrow:");
+				getchar();
+			}
+			if (col > 3){valid = false;}
 			if(b.Positions[col-1].row[row-1] != ' '){
 				printf("error place already full\n");
 			}else{
 				b.Positions[col-1].row[row-1] = turn;
 				valid = true;
 			}
-			print_board(b);
+			
 		}
-	won = check_victory(b);
-	valid = false;
-	turn = change_turn(turn);
-	turncount++;
-	if(turncount == 9){
+		won = check_victory(b, &winner);
+		if(!won){valid = false;}
+		turn = change_turn(turn);
+		turncount++;
+		if(turncount == 9 && !won){
 		
-		printf("Stalemate!\nPlay again? (y/n):");
-		char decicion;
-		scanf("%c", &decicion);
-		if(decicion == 'y'){
-			turncount = 0;
-			b = init_board();
-		}else{
-			won = true;
+			printf("Stalemate!\nPlay again? (y/n):");
+			scanf("%s", &decicion);
+			if(decicion == 'y'){
+				turncount = 0;
+				b = init_board();
+			}else{
+				won = true;
+			}
 		}
 	}
-	}
+	printf("%c is the winner!", winner);
 }
