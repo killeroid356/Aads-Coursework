@@ -84,7 +84,6 @@ int main(int argc, char **argv)
 	bool won = false;
 	printf("Welcome to Tic tac toe!\n");
 	struct Board b = init_board();
-	print_board(b);
 	while(!won){
 		while(!valid){
 			print_board(b);
@@ -102,6 +101,7 @@ int main(int argc, char **argv)
 				printf("Invalid data\nrow:");
 				getchar();
 			}
+			getchar();
 			if (col > 3){valid = false;}
 			if(b.Positions[col-1].row[row-1] != ' '){
 				printf("error place already full\n");
@@ -116,9 +116,9 @@ int main(int argc, char **argv)
 		turn = change_turn(turn);
 		turncount++;
 		if(turncount == 9 && !won){
-		
+			print_board(b);
 			printf("Stalemate!\nPlay again? (y/n):");
-			scanf("%s", &decicion);
+			scanf("%c", &decicion);
 			if(decicion == 'y'){
 				turncount = 0;
 				b = init_board();
@@ -127,5 +127,6 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+	print_board(b);
 	printf("%c is the winner!", winner);
 }
